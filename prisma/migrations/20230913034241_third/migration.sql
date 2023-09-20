@@ -1,0 +1,2 @@
+-- AlterTable
+ALTER TABLE `user` ADD COLUMN `fecha_nacimiento` DATETIME(3) NULL DEFAULT CURRENT_TIMESTAMP(3);
