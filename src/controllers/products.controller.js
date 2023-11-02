@@ -59,11 +59,13 @@ const update = async (req, res) => {
             req.body.cost, 
             req.body.category
         );
+
     if (productToUpdate) {
       res.status(200).send(productToUpdate);
     } else {
       res.status(404).send("Producto no encontrado");
     }
+    
   } catch (err) {
     res.status(400).send(err.message);
   }

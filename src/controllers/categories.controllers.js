@@ -28,7 +28,7 @@ const getOne = async (req, res) => {
 
 const create = async (req, res) => {
     try {
-        const selectedCategory = await services.create(req.body.data)
+        const selectedCategory = await services.create(req.body)
 
         res.status(200).send(selectedCategory);
     }
@@ -39,7 +39,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
     try {
-        const updatedCategory = await services.update(req.params.id, req.body.data)
+        const updatedCategory = await services.update(req.params.id, req.body)
 
         res.status(200).send(updatedCategory);
     }

@@ -26,9 +26,24 @@ const getOne = async (req, res) => {
     }
 }
 
+const getCajaHoy = async (req, res) => {
+    try {
+        const selectedSell = await services.getCajaHoy()
+
+        if (selectedSell === null) {
+            res.status(500).send("Problemas a obtener las ventas de la fecha");
+        }
+        else {
+            res.status(200).send(selectedSell);
+        }
+    }
+    catch (err) {
+        res.status(500).json(err.message);
+    }
+}
+
 const create = async (req, res) => {
     try {
-        console.log(req.body)
         const newSell = await services.create(req.body)
 
         if (!newSell) {
@@ -78,6 +93,7 @@ const deleteOne = async (req, res) => {
 
 export default {
     getAll,
+    getCajaHoy,
     getOne,
     create,
     update,

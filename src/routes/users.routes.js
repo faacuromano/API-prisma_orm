@@ -8,7 +8,7 @@ router
     
     .get("/user/:id", userControllers.getOne)
 
-    .post("/user/", userControllers.create)
+    .post("/user", userControllers.create)
 
     .put("/user/:id", userControllers.update)
 

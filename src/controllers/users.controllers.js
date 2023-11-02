@@ -24,7 +24,7 @@ const getOne = async (req, res) => {
 
 const create = async (req, res) => {
   try {
-    const selectedUser = await services.create(req.body.data)
+    const selectedUser = await services.create(req.body)
     if (selectedUser != null) {
       res.status(200).send(selectedUser);
     } else {
@@ -37,7 +37,7 @@ const create = async (req, res) => {
 
 const update = async (req, res) => {
   try {
-    const selectedUser = await services.update(req.params.id, req.body.data)
+    const selectedUser = await services.update(req.params.id, req.body)
     if (selectedUser != null) {
       res.status(200).send(selectedUser);
     } else {

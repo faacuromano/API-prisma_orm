@@ -1,8 +1,8 @@
 import { prisma } from "../db.js";
 
-const getAll = () => {
+const getAll = async () => {
   try {
-    const allSells = prisma.sell.findMany({
+    const allSells = await prisma.sell.findMany({
       include: {
         sellconcept: true,
       },
@@ -14,9 +14,31 @@ const getAll = () => {
   }
 };
 
-const getOne = (_id) => {
+const getCajaHoy = async () => {
   try {
-    const selectedSell = prisma.sell.findFirst({
+    const sellsToday = await prisma.$queryRaw
+    `
+      SELECT SUM(total) AS 'cajaHoy'
+      FROM sell
+      WHERE DATE(fecha) = CURDATE();
+    `;
+
+    if (sellsToday.length > 0) {
+      return sellsToday[0]; // Accede al primer objeto del array
+    } else {
+      // Puedes manejar el caso en el que no hay resultados si es necesario
+      return { 'cajaHoy': '0' };
+    }
+  } catch (err) {
+    console.log(err.message);
+    return err.message;
+  }
+};
+
+
+const getOne = async (_id) => {
+  try {
+    const selectedSell = await prisma.sell.findFirst({
       where: {
         id: parseInt(_id),
       },
@@ -101,7 +123,7 @@ const create = async (sellData) => {
       throw new Error("SellConcepts must be defined for the sale.");
     }
 
-    if (!newSell.estadoPago) {
+    if (newSell.estadoPago == 0) {
       await prisma.client.update({
         where: {
           id: newSell.client_id,
@@ -150,6 +172,7 @@ const deleteOne = (_id) => {
 
 export default {
   getAll,
+  getCajaHoy,
   getOne,
   create,
   update,
