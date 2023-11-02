@@ -1,7 +1,6 @@
 import { prisma } from "../db.js";
 
 const getAll = () => {
-    return new Promise((resolve, reject) => {
         try {
             const allSellConcepts = prisma.sellConcept.findMany()
             resolve(allSellConcepts);
@@ -9,11 +8,9 @@ const getAll = () => {
         catch (err) {
             reject(err.message);
         }
-    });
 };
 
 const getOne = (_id) => {
-    return new Promise((resolve, reject) => {
         try {
             const selectedSellConcept = prisma.sellConcept.findFirst({
                 where: {
@@ -25,11 +22,9 @@ const getOne = (_id) => {
         catch (err) {
             reject(err.message);
         }
-    });
 };
 
 const create = (_newsellConcept) => {
-    return new Promise((resolve, reject) => {
         try {
             const newsellConcept = prisma.sellConcept.create({
                 data: _newsellConcept
@@ -40,11 +35,9 @@ const create = (_newsellConcept) => {
         catch (err) {
             reject(err.message);
         }
-    });
 };
 
 const update = (_id,  _sellConceptUpdated) => {
-    return new Promise((resolve, reject) => {
         try {
             const newSellConcept = prisma.sellConcept.update({
                 where: {
@@ -58,11 +51,9 @@ const update = (_id,  _sellConceptUpdated) => {
         catch (err) {
             reject(err.message);
         }
-    });
 };
 
 const deleteOne = (_id) => {
-    return new Promise((resolve, reject) => {
         try {
             const deletedSellConcept = prisma.sellConcept.delete({
                 where: {
@@ -74,7 +65,6 @@ const deleteOne = (_id) => {
         catch (err) {
             reject(err.message);
         }
-    });
 };
 
 export default {

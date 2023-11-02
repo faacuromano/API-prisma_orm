@@ -45,21 +45,26 @@ const create = async (req, res) => {
     }
     catch (err) {
         res.send({ error: err.message })
-        console.log(err.message)
     }
 }
 
 const update = async (req, res) => {
   try {
-    const productToUpdate = await services.update(req.params.id, req.body.name, req.body.price, req.body.stock, req.body.cost, req.body.category);
+    const productToUpdate = await services
+        .update(
+            req.params.id, 
+            req.body.name, 
+            req.body.price, 
+            req.body.stock, 
+            req.body.cost, 
+            req.body.category
+        );
     if (productToUpdate) {
       res.status(200).send(productToUpdate);
     } else {
-      // En caso de que no se haya encontrado el producto para actualizar
       res.status(404).send("Producto no encontrado");
     }
   } catch (err) {
-    // En caso de un error en la validación o en el servidor
     res.status(400).send(err.message);
   }
 };
@@ -68,7 +73,12 @@ const update = async (req, res) => {
 const deleteOne = async (req, res) => {
     try {
         const productToDelete = await services.deleteOne(req.params.id)
-        res.status(200).send(productToDelete)
+        if (!productToDelete) {
+            res.status(204).send({error: "El producto no se encontro"});
+        }
+        else {
+            res.status(200).send("Producto eliminado");
+        }
     }
     catch (err) {
         res.send(err.message)

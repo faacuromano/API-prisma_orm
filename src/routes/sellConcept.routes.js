@@ -13,6 +13,5 @@ router
     .put("/concept/:id", sellConceptController.update)
         
     .delete("/concept/:id", sellConceptController.deleteOne)
-    
 
 export default router

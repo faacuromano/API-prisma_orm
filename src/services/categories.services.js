@@ -1,51 +1,73 @@
 import { prisma } from "../db.js";
 
 const getAll = () => {
-    return new Promise((resolve, reject) => {
-        try {
-            const allUsers = prisma.category.findMany()
-            resolve(allUsers);
-        }
-        catch (err) {
-            reject(err.message);
-        }
-    });
+    try {
+        const allUsers = prisma.category.findMany()
+        return allUsers;
+    }
+    catch (err) {
+        return err.message;
+    }
 };
 
 const getOne = (_id) => {
-    return new Promise((resolve, reject) => {
         try {
             const selectedUser = prisma.category.findFirst({
                 where: {
                     id: parseInt(_id)
                 }
             })
-            resolve(selectedUser);
+            return selectedUser;
         }
         catch (err) {
-            reject(err.message);
+            return err.message;
         }
-    });
 };
 
-const createOne = (_id) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const selectedUser = prisma.category.findFirst({
-                where: {
-                    id: parseInt(_id)
-                }
-            })
-            resolve(selectedUser);
-        }
-        catch (err) {
-            reject(err.message);
-        }
-    });
+const create = (data) => {
+    try {
+        const selectedUser = prisma.category.create({
+            data: data
+        })
+        return selectedUser;
+    }
+    catch (err) {
+        return err.message;
+    }
+};
+
+const update = (_id, _data) => {
+    try {
+        const selectedUser = prisma.category.update({
+            where:{
+                id: parseInt(_id)
+            },
+            data: data
+        })
+        return selectedUser;
+    }
+    catch (err) {
+        return err.message;
+    }
+};
+const deleteOne = (_id) => {
+    try {
+        const selectedUser = prisma.category.delete({
+            where:{
+                id: parseInt(_id)
+            }
+        })
+        return selectedUser;
+    }
+    catch (err) {
+        return err.message;
+    }
 };
 
 export default {
     getAll,
     getOne,
-    createOne
+    create,
+    update,
+    deleteOne
 }

@@ -1,173 +1,157 @@
 import { prisma } from "../db.js";
 
 const getAll = () => {
-    return new Promise((resolve, reject) => {
-        try {
-            const allSells = prisma.sell.findMany(
-                {
-                    include: {
-                        sell_concept: true
-                    }
-                }
-            )
-            resolve(allSells);
-        }
-        catch (err) {
-            reject(err.message);
-        }
+  try {
+    const allSells = prisma.sell.findMany({
+      include: {
+        sellconcept: true,
+      },
     });
+    return allSells;
+  } catch (err) {
+    console.log(err.message);
+    return err.message;
+  }
 };
 
 const getOne = (_id) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const selectedSell = prisma.sell.findFirst({
-                where: {
-                    id: parseInt(_id)
-                },
-                include: {
-                    sell_concept: true
-                }
-            })
-            resolve(selectedSell);
-        }
-        catch (err) {
-            reject(err.message);
-        }
+  try {
+    const selectedSell = prisma.sell.findFirst({
+      where: {
+        id: parseInt(_id),
+      },
+      include: {
+        sellconcept: true,
+      },
     });
+    return selectedSell;
+  } catch (err) {
+    return err.message;
+  }
 };
 
-const create = (sellData) => {
-    return new Promise(async (resolve, reject) => {
-      try {
-        const sellConcepts = [];
-        let total = 0;
-  
-        for (const concept of sellData.sell_concepts) {
-          const product = await prisma.product.findUnique({
-            where: {
-              id: concept.product_id
-            }
-          });
-  
-          if (!product) {
-            reject(new Error(`Product with id ${concept.product_id} not found.`));
-            return;
-          }
-  
-          if (product.stock < concept.quantity) {
-            reject(new Error(`Insufficient stock for product with id ${concept.product_id}. Stock available: ${product.stock}`));
-            return;
-          }
-  
-          const unitPrice = product.price;
-          const importValue = unitPrice * concept.quantity;
-  
-          sellConcepts.push({
-            quantity: concept.quantity,
-            unitPrice,
-            import: importValue,
-            product_id: concept.product_id
-          });
-  
-          total += importValue;
-  
-          await prisma.product.update({
-            where: {
-              id: concept.product_id
-            },
-            data: {
-              stock: {
-                decrement: concept.quantity
-              }
-            }
-          });
-        }
-  
+const create = async (sellData) => {
+  try {
+    const sellConcepts = [];
+    let total = 0;
 
-        const newSell = await prisma.sell.create({
-          data: {
-            total,
-            estadoPago: sellData.estadoPago,
-            tipoPago: sellData.tipoPago,
-            client: {
-              connect: {
-                id: sellData.client_id
-              }
-            },
-            user: {
-              connect: {
-                id: sellData.user_id
-              }
-            },
-            sell_concept: {
-              create: sellConcepts
-            }
-          }
-        });
-        
-        if (newSell.estadoPago === false) {
+    for (const concept of sellData.sell_concepts) {
+      const product = await prisma.product.findUnique({
+        where: {
+          id: concept.product_id,
+        },
+      });
 
-        await prisma.client.update({
-          where: {
-            id: newSell.client_id
+      if (!product) {
+        throw new Error(`Product with id ${concept.product_id} not found.`);
+      }
+
+      if (product.stock < concept.quantity) {
+        throw new Error(
+          `Insufficient stock for product with id ${concept.product_id}. Stock available: ${product.stock}`
+        );
+      }
+
+      const unitPrice = product.price;
+      const importValue = unitPrice * concept.quantity;
+
+      sellConcepts.push({
+        quantity: concept.quantity,
+        unitPrice,
+        import: importValue,
+        product_id: concept.product_id,
+      });
+
+      total += importValue;
+
+      await prisma.product.update({
+        where: {
+          id: concept.product_id,
+        },
+        data: {
+          stock: {
+            decrement: concept.quantity,
           },
-          data: {
-            deuda: {
-              increment: newSell.total
-            }
-          }
-        });
-          
-      }
+        },
+      });
+    }
 
-        resolve(newSell);
-      } catch (error) {
-        console.error('Error creating sell:', error.message);
-        reject(new Error('Error creating sell.'));
-      }
+    const newSell = await prisma.sell.create({
+      data: {
+        total,
+        estadoPago: sellData.estadoPago,
+        tipoPago: sellData.tipoPago,
+        client: {
+          connect: {
+            id: sellData.client_id,
+          },
+        },
+        user: {
+          connect: {
+            id: sellData.user_id,
+          },
+        },
+        sellconcept: {
+          create: sellConcepts,
+        },
+      },
     });
-  };
-  
 
-const update = (_id,  _sellUpdated) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const newsell = prisma.sell.update({
-                where: {
-                    id: parseInt(_id)
-                },
-                data: _sellUpdated
-                
-            })
-            resolve(newsell);
-        }
-        catch (err) {
-            reject(err.message);
-        }
+    if (sellConcepts.length === 0) {
+      throw new Error("SellConcepts must be defined for the sale.");
+    }
+
+    if (!newSell.estadoPago) {
+      await prisma.client.update({
+        where: {
+          id: newSell.client_id,
+        },
+        data: {
+          deuda: {
+            increment: newSell.total,
+          },
+        },
+      });
+    }
+
+    return newSell;
+  } catch (error) {
+    console.error("Error creating sell:", error.message);
+    throw new Error("Error creating sell.");
+  }
+};
+
+const update = (_id, _sellUpdated) => {
+  try {
+    const newsell = prisma.sell.update({
+      where: {
+        id: parseInt(_id),
+      },
+      data: _sellUpdated,
     });
+    return newsell;
+  } catch (err) {
+    return err.message;
+  }
 };
 
 const deleteOne = (_id) => {
-    return new Promise((resolve, reject) => {
-        try {
-            const deletedSell = prisma.sell.delete({
-                where: {
-                    id: parseInt(_id)
-                }
-            })
-            resolve(deletedSell);
-        }
-        catch (err) {
-            reject(err.message);
-        }
+  try {
+    const deletedSell = prisma.sell.delete({
+      where: {
+        id: parseInt(_id),
+      },
     });
+    return deletedSell;
+  } catch (err) {
+    return err.message;
+  }
 };
 
 export default {
-    getAll,
-    getOne,
-    create,
-    update,
-    deleteOne,
-}
+  getAll,
+  getOne,
+  create,
+  update,
+  deleteOne,
+};

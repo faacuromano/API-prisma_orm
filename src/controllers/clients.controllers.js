@@ -63,7 +63,7 @@ const deleteOne = async (req, res) => {
         const deletedClient = await services.deleteOne(req.params.id)
 
         if (!deletedClient) {
-            res.status(204).send("El cliente no se encontro");
+            res.status(204).send({error: "El cliente no se encontro"});
         }
         else {
             res.status(200).send("Cliente eliminado");

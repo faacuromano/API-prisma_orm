@@ -8,11 +8,10 @@ router
     
     .get("/categories/:id", categoriesController.getOne)
 
-    .post("/categories", async (req, res) => {
-        const newProduct = await prisma.category.create({
-            data: req.body
-        })
-        res.json(newProduct)
-    })
+    .post("/categories", categoriesController.create)
+    
+    .put("/categories/:id", categoriesController.update)
+
+    .delete("/categories:id", categoriesController.deleteOne)
 
 export default router
