@@ -9,7 +9,6 @@ const getAll = async () => {
     });
     return allSells;
   } catch (err) {
-    console.log(err.message);
     return err.message;
   }
 };
@@ -24,13 +23,11 @@ const getCajaHoy = async () => {
     `;
 
     if (sellsToday.length > 0) {
-      return sellsToday[0]; // Accede al primer objeto del array
+      return sellsToday[0]; 
     } else {
-      // Puedes manejar el caso en el que no hay resultados si es necesario
       return { 'cajaHoy': '0' };
     }
   } catch (err) {
-    console.log(err.message);
     return err.message;
   }
 };

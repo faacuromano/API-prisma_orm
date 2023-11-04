@@ -2,8 +2,8 @@ import { prisma } from "../db.js";
 
 const getAll = () => {
   try {
-    const allProduct = prisma.product.findMany();
-    return allProduct;
+    const allProducts = prisma.product.findMany();
+    return allProducts;
   } catch (err) {
     return err.message;
   }

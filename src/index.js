@@ -7,6 +7,7 @@ import usersRoutes from './routes/users.routes.js'
 import sell_conceptsRoutes from './routes/sellConcept.routes.js'
 import sellRoutes from './routes/sells.routes.js'
 import clientRoutes from './routes/clients.routes.js'
+import proveedoresRoutes from './routes/proveedores.routes.js'
 
 const app = express();
 const _PORT = 6789;
@@ -20,10 +21,12 @@ app.use("/api", usersRoutes)
 app.use("/api", clientRoutes)
 app.use("/api", sellRoutes)
 app.use("/api", sell_conceptsRoutes)
+app.use("/api", proveedoresRoutes)
 
 app.listen(_PORT)
 
 consoleWrite();
+
 function consoleWrite() {
 console.clear()
 console.log(`-> ✅ Status: \tOK!`)
